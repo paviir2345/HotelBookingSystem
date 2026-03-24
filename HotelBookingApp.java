@@ -1,71 +1,93 @@
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 
 /**
- * Hotel Booking Management System
- * UC4: Room Search & Availability Check
- *
- * @author Pavithra
- * @version 1.3
+ * Hotel Booking System
+ * Version: 1.0
+ * UC1 → UC5 Implementation
  */
 public class HotelBookingApp {
 
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
-        boolean running = true;
 
-        // Inventory (Room Data)
-        ArrayList<Room> rooms = new ArrayList<>();
-        rooms.add(new Room("Single Room", 1000, 5));
-        rooms.add(new Room("Double Room", 2000, 3));
-        rooms.add(new Room("Suite", 5000, 0)); // Not available
+        // Room Data (UC4)
+        Map<String, Integer> inventory = new HashMap<>();
+        inventory.put("Single", 5);
+        inventory.put("Double", 3);
+        inventory.put("Suite", 2);
 
-        // Welcome Message
-        System.out.println("====================================");
-        System.out.println("   HOTEL BOOKING MANAGEMENT SYSTEM  ");
-        System.out.println("====================================");
-        System.out.println("Version: 1.3");
+        // Room Prices
+        Map<String, Integer> prices = new HashMap<>();
+        prices.put("Single", 1000);
+        prices.put("Double", 2000);
+        prices.put("Suite", 5000);
 
-        while (running) {
+        // Booking Queue (UC5)
+        Queue<Reservation> bookingQueue = new LinkedList<>();
 
-            System.out.println("\nSelect an option:");
+        int choice;
+
+        do {
+            // UC2 Menu
+            System.out.println("\n===== Hotel Booking System =====");
             System.out.println("1. View Available Rooms");
-            System.out.println("2. Book Room");
+            System.out.println("2. Book Room (Add to Queue)");
             System.out.println("3. Exit");
-
             System.out.print("Enter your choice: ");
-            int choice = scanner.nextInt();
+
+            choice = scanner.nextInt();
 
             switch (choice) {
 
+                // UC4 – Room Search
                 case 1:
-                    // UC4 LOGIC (Read-only search)
                     System.out.println("\nAvailable Rooms:");
+                    for (String type : inventory.keySet()) {
+                        int count = inventory.get(type);
 
-                    for (Room room : rooms) {
-                        if (room.getAvailableRooms() > 0) {
-                            System.out.println("Type: " + room.getType());
-                            System.out.println("Price: ₹" + room.getPrice());
-                            System.out.println("Available: " + room.getAvailableRooms());
-                            System.out.println("----------------------");
+                        // Show only available rooms
+                        if (count > 0) {
+                            System.out.println(type + " | Available: " + count +
+                                    " | Price: ₹" + prices.get(type));
                         }
                     }
                     break;
 
+                // UC5 – Booking Request Queue
                 case 2:
-                    System.out.println("Booking feature coming in next UC...");
+                    scanner.nextLine(); // clear buffer
+
+                    System.out.print("Enter your name: ");
+                    String name = scanner.nextLine();
+
+                    System.out.print("Enter room type (Single/Double/Suite): ");
+                    String roomType = scanner.nextLine();
+
+                    // Create Reservation
+                    Reservation reservation = new Reservation(name, roomType);
+
+                    // Add to Queue
+                    bookingQueue.add(reservation);
+
+                    System.out.println("Booking request added to queue.");
+
+                    // Show Queue (for understanding FIFO)
+                    System.out.println("\nCurrent Booking Queue:");
+                    for (Reservation r : bookingQueue) {
+                        System.out.println(r.getGuestName() + " -> " + r.getRoomType());
+                    }
                     break;
 
                 case 3:
-                    System.out.println("Exiting application...");
-                    running = false;
+                    System.out.println("Thank you for using the system!");
                     break;
 
                 default:
-                    System.out.println("Invalid choice.");
+                    System.out.println("Invalid choice!");
             }
-        }
+
+        } while (choice != 3);
 
         scanner.close();
     }
