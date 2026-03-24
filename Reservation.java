@@ -1,8 +1,4 @@
-/**
- * Reservation represents a booking request
- */
 public class Reservation {
-
     private String guestName;
     private String roomType;
 
